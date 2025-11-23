@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Records - Treatopia POS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Spectral:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5eeff 0%, #e8d9ff 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(to right, #9c6ade, #b388eb);
+      color: white;
+      font-family: 'Spectral', serif;
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .card-header {
+      background: linear-gradient(to right, #b388eb, #9c6ade);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card-header h2 {
+      font-family: 'Spectral', serif;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .card-body {
+      padding: 25px;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+      gap: 15px;
+    }
+
+    .stat-card {
+      background: #f8f4ff;
+      border-radius: 10px;
+      padding: 20px;
+      flex: 1;
+      min-width: 200px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid #b388eb;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #7e57c2;
+      margin: 10px 0;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th {
+      background-color: #f0e6ff;
+      color: #7e57c2;
+      font-weight: 600;
+      text-align: left;
+      padding: 15px;
+      border-bottom: 2px solid #d8b6f1;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover {
+      background-color: #f9f5ff;
+    }
+
+    .no-sales {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+      font-style: italic;
+    }
+
+    .no-sales-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: #d8b6f1;
+    }
+
+    .back-container {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .back-button {
+      background: linear-gradient(to right, #b388eb, #9c6ade);
+      color: white;
+      font-weight: 600;
+      padding: 12px 30px;
+      border-radius: 30px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(179, 136, 235, 0.3);
+    }
+
+    .back-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(179, 136, 235, 0.4);
+    }
+
+    .date-cell {
+      font-weight: 500;
+      color: #7e57c2;
+    }
+
+    .total-cell {
+      font-weight: 600;
+      color: #5d4037;
+    }
+
+    @media (max-width: 768px) {
+      .stats-container {
+        flex-direction: column;
+      }
+      
+      .stat-card {
+        min-width: 100%;
+      }
+      
+      th, td {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>TREATOPIA POS - SALES RECORD</header>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>Sales History</h2>
+      </div>
+      <div class="card-body">
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-label">Total Sales</div>
+            <div class="stat-value" id="totalSales">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Today's Sales</div>
+            <div class="stat-value" id="todaySales">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Average Order</div>
+            <div class="stat-value" id="avgOrder">₱0</div>
+          </div>
+        </div>
+
+        <table id="salesTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Items</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="salesBody"></tbody>
+        </table>
+        <div id="noSales" class="no-sales" style="display:none;">
+          <div class="no-sales-icon">📊</div>
+          <p>No sales recorded yet.</p>
+          <p>Start making sales in the POS system to see records here.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="back-container">
+      <a href="home.html" class="back-button">
+        <span>←</span> Back to POS
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Load and display sales records from localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+      const salesBody = document.getElementById('salesBody');
+      const noSalesMsg = document.getElementById('noSales');
+      const totalSalesEl = document.getElementById('totalSales');
+      const todaySalesEl = document.getElementById('todaySales');
+      const avgOrderEl = document.getElementById('avgOrder');
+
+      // Retrieve sales records from localStorage
+      const sales = JSON.parse(localStorage.getItem('salesRecords')) || [];
+      const today = new Date().toLocaleDateString('en-PH');
+
+      if (sales.length === 0) {
+        noSalesMsg.style.display = 'block';
+        return;
+      }
+
+      // Calculate statistics
+      let totalSales = sales.length;
+      let todaySales = sales.filter(sale => sale.date === today).length;
+      let totalRevenue = sales.reduce((sum, sale) => {
+        // Extract numeric value from total string (e.g., "₱850" -> 850)
+        const amount = parseInt(sale.total.replace('₱', '')) || 0;
+        return sum + amount;
+      }, 0);
+      let avgOrderValue = totalRevenue / totalSales;
+
+      // Update statistics
+      totalSalesEl.textContent = totalSales;
+      todaySalesEl.textContent = todaySales;
+      avgOrderEl.textContent = `₱${Math.round(avgOrderValue)}`;
+
+      // Display each sale record
+      sales.forEach(sale => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="date-cell">${sale.date}</td>
+          <td>${sale.items}</td>
+          <td class="total-cell">${sale.total}</td>
+        `;
+        salesBody.appendChild(row);
+      });
+    });
+  </script>
+</body>
+</html>

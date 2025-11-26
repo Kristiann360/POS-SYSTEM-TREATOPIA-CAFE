@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Spectral:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" 
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>Treatopia POS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5eeff 0%, #e8d9ff 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(to right, #9c6ade, #b388eb);
+      color: white;
+      font-family: 'Spectral', serif;
+      font-weight: 700;
+      font-size: 28px;
+      text-align: center;
+      padding: 15px 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: relative;
+    } 
+
+    /* Logout button style */
+    #logoutBtn {
+      position: absolute;
+      right: 300px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    #logoutBtn:hover {
+      background: #ff5252;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    }
+
+    .container {
+      display: flex;
+      height: calc(100vh - 70px);
+      background-color: #fff;
+      margin: 0 auto;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      overflow: hidden;
+      max-width: 1400px;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #f8f4ff;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #e8e0ff;
+    }
+
+    .sidebar button {
+      border: none;
+      background: white;
+      padding: 16px 15px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid #f0e6ff;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar button:hover {
+      background-color: #f0e6ff;
+      color: #7e57c2;
+      transform: translateX(5px);
+    }
+
+    .sidebar button.active {
+      background: linear-gradient(to right, #b388eb, #9c6ade);
+      color: white;
+      box-shadow: 0 4px 8px rgba(156, 106, 222, 0.3);
+    }
+
+    .menu-title {
+      background: linear-gradient(to right, #9c6ade, #b388eb);
+      color: white;
+      font-weight: 700;
+      text-align: center;
+      padding: 20px;
+      font-size: 20px;
+      font-family: 'Spectral', serif;
+    }
+
+    .main {
+      flex: 1;
+      padding: 25px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      overflow-y: auto;
+      background-color: #fff;
+    }
+
+    .category-title {
+      color: #7e57c2;
+      font-size: 26px;
+      font-weight: 700;
+      align-self: flex-start;
+      margin-bottom: 25px;
+      font-family: 'Spectral', serif;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #f0e6ff;
+      width: 100%;
+      text-align: center;
+    }
+
+    .items {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .item {
+      background: linear-gradient(135deg, #f8f4ff 0%, #f0e6ff 100%);
+      border-radius: 15px;
+      width: 180px;
+      height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      color: #333;
+      margin: 10px;
+      padding: 15px 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+      border: 2px solid #f0e6ff;
+      position: relative;
+    }
+
+    .item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(156, 106, 222, 0.2);
+      border-color: #b388eb;
+    }
+
+    .item-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border: 3px solid #e8d9ff;
+    }
+
+    .item-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 5px;
+      color: #5d4037;
+    }
+
+    .item-price {
+      font-size: 16px;
+      color: #7e57c2;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .item-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .item:hover .item-actions {
+      opacity: 1;
+    }
+
+    .edit-btn, .delete-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .edit-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background: #45a049;
+      transform: scale(1.1);
+    }
+
+    .delete-btn {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background: #ff5252;
+      transform: scale(1.1);
+    }
+
+    .right-panel {
+      width: 320px;
+      background: #faf7fd;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 1px solid #e8e0ff;
+    }
+
+    .cart {
+      padding: 25px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .cart h3 {
+      color: #7e57c2;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'Spectral', serif;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8e0ff;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e8e0ff;
+      padding: 12px 0;
+      font-size: 15px;
+    }
+
+    .remove-btn {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .remove-btn:hover {
+      background: #ff5252;
+      transform: scale(1.1);
+    }
+
+    .checkout {
+      padding: 18px;
+      background: linear-gradient(to right, #9c6ade, #b388eb);
+      color: white;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 18px;
+      border: none;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .checkout:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(156, 106, 222, 0.4);
+    }
+
+    .total {
+      text-align: right;
+      font-weight: 700;
+      margin-top: 20px;
+      color: #5d4037;
+      font-size: 20px;
+      padding: 15px 0;
+      border-top: 2px solid #e8e0ff;
+    }
+
+    .sales-button {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: linear-gradient(to right, #9c6ade, #b388eb);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 12px 25px;
+      text-decoration: none;
+      border: none;
+      box-shadow: 0 4px 12px rgba(156, 106, 222, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sales-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(156, 106, 222, 0.4);
+    }
+
+    /* Add Item Button Styles */
+    .add-item-btn {
+      background: linear-gradient(to right, #4CAF50, #45a049);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 12px 25px;
+      border: none;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 15px auto;
+      width: 200px;
+      justify-content: center;
+    }
+
+    .add-item-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+    }
+
+    /* Payment Method Styles */
+    .payment-section {
+      padding: 15px 25px;
+      background: #f8f4ff;
+      border-top: 1px solid #e8e0ff;
+      border-bottom: 1px solid #e8e0ff;
+    }
+
+    .payment-section h4 {
+      color: #7e57c2;
+      margin-bottom: 12px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .payment-options {
+      display: flex;
+      gap: 15px;
+    }
+
+    .payment-option {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      background: white;
+      border: 2px solid #e8e0ff;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .payment-option:hover {
+      border-color: #b388eb;
+      background: #f9f5ff;
+    }
+
+    .payment-option.selected {
+      border-color: #7e57c2;
+      background: #f0e6ff;
+      color: #7e57c2;
+    }
+
+    .payment-option.selected.cash {
+      border-color: #4CAF50;
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .payment-option.selected.credit {
+      border-color: #2196F3;
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal h2 {
+      color: #7e57c2;
+      margin-bottom: 20px;
+      text-align: center;
+      font-family: 'Spectral', serif;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e8e0ff;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #9c6ade;
+      box-shadow: 0 0 0 3px rgba(156, 106, 222, 0.2);
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+    }
+
+    .modal-buttons button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #saveItemBtn, #updateItemBtn {
+      background: linear-gradient(to right, #4CAF50, #45a049);
+      color: white;
+    }
+
+    #saveItemBtn:hover, #updateItemBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    #cancelItemBtn {
+      background: #f0e6ff;
+      color: #7e57c2;
+    }
+
+    #cancelItemBtn:hover {
+      background: #e8d9ff;
+      transform: translateY(-2px);
+    }
+
+    .delete-confirm {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .delete-confirm:hover {
+      background: #ff5252;
+      transform: translateY(-2px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        height: auto;
+      }
+      
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e8e0ff;
+      }
+      
+      .right-panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #e8e0ff;
+      }
+      
+      .sales-button {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin: 15px auto;
+        display: block;
+        width: 200px;
+        justify-content: center;
+      }
+      
+      .items {
+        gap: 15px;
+      }
+      
+      .item {
+        width: 160px;
+        height: 220px;
+      }
+      
+      .item-image {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .item-actions {
+        opacity: 1;
+      }
+
+      .payment-options {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>TREATOPIA POS
+     <button id="logoutBtn">Logout</button>
+  </header>
+
+  <div class="container">
+    
+    <div class="sidebar">
+      <div class="menu-title">MENU</div>
+      <a href="sales.html" class="sales-button">
+        <i class="fas fa-chart-bar"></i> SALES RECORDS
+      </a>
+      <button class="active" onclick="showMenu('Mini Pancakes')">
+        <i class="fas fa-pancakes"></i> MINI PANCAKES
+      </button>
+      <button onclick="showMenu('Croffles')">
+        <i class="fas fa-cookie"></i> CROFFLES
+      </button>
+      <button onclick="showMenu('Churros')">
+        <i class="fas fa-stick"></i> CHURROS
+      </button>
+      <button onclick="showMenu('Fridge Faves')">
+        <i class="fas fa-ice-cream"></i> FRIDGE FAVES
+      </button>
+      <button onclick="showMenu('Tiramisu')">
+        <i class="fas fa-cake"></i> TIRAMISU
+      </button>
+      <button class="add-item-btn" onclick="openAddItemModal()">
+        <i class="fas fa-plus"></i> ADD ITEM
+      </button>
+    </div>
+
+    <div class="main" id="mainSection">
+      <div class="category-title" id="categoryTitle">MINI PANCAKES</div>
+      <div class="items" id="itemList"></div>
+    </div>
+
+    <div class="right-panel" id="rightPanel">
+      <div class="cart" id="cart">
+        <h3>ORDER SUMMARY</h3>
+        <div id="cartItems"></div>
+        <div class="total" id="total">Total: ₱0</div>
+      </div>
+      
+      <!-- Payment Method Section -->
+      <div class="payment-section">
+        <h4>PAYMENT METHOD</h4>
+        <div class="payment-options">
+          <div class="payment-option cash selected" data-method="cash" onclick="selectPaymentMethod('cash')">
+            <i class="fas fa-money-bill"></i> Cash
+          </div>
+          <div class="payment-option credit" data-method="credit" onclick="selectPaymentMethod('credit')">
+            <i class="fas fa-credit-card"></i> Credit
+          </div>
+        </div>
+      </div>
+      
+      <button class="checkout" onclick="checkout()">CHECKOUT</button>
+    </div>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div id="addItemModal" class="modal">
+    <div class="modal-content">
+      <h2>Add New Item</h2>
+      <form id="addItemForm">
+        <div class="form-group">
+          <label for="itemCategory">Category</label>
+          <select id="itemCategory" required>
+            <option value="">Select a category</option>
+            <option value="Mini Pancakes">Mini Pancakes</option>
+            <option value="Croffles">Croffles</option>
+            <option value="Churros">Churros</option>
+            <option value="Fridge Faves">Fridge Faves</option>
+            <option value="Tiramisu">Tiramisu</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="itemName">Item Name</label>
+          <input type="text" id="itemName" placeholder="Enter item name" required>
+        </div>
+        <div class="form-group">
+          <label for="itemPrice">Price (₱)</label>
+          <input type="number" id="itemPrice" placeholder="Enter price" min="0" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="itemImage">Image URL</label>
+          <input type="url" id="itemImage" placeholder="Enter image URL">
+        </div>
+        <div class="modal-buttons">
+          <button type="button" id="cancelItemBtn">Cancel</button>
+          <button type="submit" id="saveItemBtn">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Item Modal -->
+  <div id="editItemModal" class="modal">
+    <div class="modal-content">
+      <h2>Edit Item</h2>
+      <form id="editItemForm">
+        <input type="hidden" id="editOriginalCategory">
+        <input type="hidden" id="editOriginalName">
+        <div class="form-group">
+          <label for="editItemCategory">Category</label>
+          <select id="editItemCategory" required>
+            <option value="">Select a category</option>
+            <option value="Mini Pancakes">Mini Pancakes</option>
+            <option value="Croffles">Croffles</option>
+            <option value="Churros">Churros</option>
+            <option value="Fridge Faves">Fridge Faves</option>
+            <option value="Tiramisu">Tiramisu</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editItemName">Item Name</label>
+          <input type="text" id="editItemName" placeholder="Enter item name" required>
+        </div>
+        <div class="form-group">
+          <label for="editItemPrice">Price (₱)</label>
+          <input type="number" id="editItemPrice" placeholder="Enter price" min="0" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="editItemImage">Image URL</label>
+          <input type="url" id="editItemImage" placeholder="Enter image URL">
+        </div>
+        <div class="modal-buttons">
+          <button type="button" id="cancelEditBtn">Cancel</button>
+          <button type="submit" id="updateItemBtn">Update Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <h2>Confirm Delete</h2>
+      <p id="deleteMessage">Are you sure you want to delete this item?</p>
+      <div class="modal-buttons">
+        <button type="button" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" id="confirmDeleteBtn" class="delete-confirm">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const menu = {
+      'Mini Pancakes': ['Nutella', 'White Chocolate', 'Matcha', 'Biscoff'],
+      'Croffles': ['Nutella', 'White Chocolate','Matcha','Mango Graham','Oreo','Biscoff','Strawberry'],
+      'Churros': ['Nutella Dip', 'White Choco Dip', 'Biscoff Dip'],
+      'Fridge Faves': ['Nutella Cheesecake', 'Oreo Cheesecake', 'Banana Pudding','Biscoff Cheesecake'],
+      'Tiramisu': ['Classic', 'Matcha', 'Oreo','Biscoff','Strawberry']
+    };
+
+    const prices = {
+      'Mini Pancakes': { 
+        'Nutella': 85, 
+        'White Chocolate': 85, 
+        'Matcha': 85, 
+        'Biscoff': 90 
+      },
+      'Croffles': { 
+        'Nutella': 115, 
+        'White Chocolate': 115, 
+        'Matcha': 115, 
+        'Mango Graham': 140,
+        'Oreo': 140,
+        'Biscoff': 150,
+        'Strawberry': 150,
+      },
+      'Churros': { 
+        'Nutella Dip': 70, 
+        'White Choco Dip': 75, 
+        'Biscoff Dip': 90 
+      },
+      'Fridge Faves': { 
+        'Nutella Cheesecake': 220, 
+        'Oreo Cheesecake': 230, 
+        'Banana Pudding': 240, 
+        'Biscoff Cheesecake': 120
+      },
+      'Tiramisu': { 
+        'Classic': 200, 
+        'Matcha': 200, 
+        'Oreo': 210,
+        'Biscoff': 220,
+        'Strawberry':220
+      }
+    };
+
+    // Image URLs for each item
+    const images = {
+      'Mini Pancakes': {
+        'Nutella': 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=400&fit=crop&crop=center',
+        'White Chocolate': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=400&fit=crop&crop=center',
+        'Matcha': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=400&fit=crop&crop=center',
+        'Biscoff': 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&h=400&fit=crop&crop=center'
+      },
+      'Croffles': {
+        'Nutella': 'https://images.unsplash.com/photo-1598214886806-c87b84b7078b?w=400&h=400&fit=crop&crop=center',
+        'White Chocolate': 'https://images.unsplash.com/photo-1555507036-ab794f27d2e9?w=400&h=400&fit=crop&crop=center',
+        'Matcha': 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&h=400&fit=crop&crop=center',
+        'Mango Graham': 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=400&fit=crop&crop=center',
+        'Oreo': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=400&fit=crop&crop=center',
+        'Biscoff': 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&h=400&fit=crop&crop=center',
+        'Strawberry': 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=400&fit=crop&crop=center'
+      },
+      'Churros': {
+        'Nutella Dip': 'https://images.unsplash.com/photo-1621447504864-d8686e12698c?w=400&h=400&fit=crop&crop=center',
+        'White Choco Dip': 'https://images.unsplash.com/photo-1621447504864-d8686e12698c?w=400&h=400&fit=crop&crop=center',
+        'Biscoff Dip': 'https://images.unsplash.com/photo-1621447504864-d8686e12698c?w=400&h=400&fit=crop&crop=center'
+      },
+      'Fridge Faves': {
+        'Nutella Cheesecake': 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=400&fit=crop&crop=center',
+        'Oreo Cheesecake': 'https://images.unsplash.com/photo-1541783245837-483b3323b0d3?w=400&h=400&fit=crop&crop=center',
+        'Banana Pudding': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=400&fit=crop&crop=center',
+        'Biscoff Cheesecake': 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=400&fit=crop&crop=center'
+      },
+      'Tiramisu': {
+        'Classic': 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=400&fit=crop&crop=center',
+        'Matcha': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=400&fit=crop&crop=center',
+        'Oreo': 'https://images.unsplash.com/photo-1541783245837-483b3323b0d3?w=400&h=400&fit=crop&crop=center',
+        'Biscoff': 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=400&fit=crop&crop=center',
+        'Strawberry': 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=400&fit=crop&crop=center'
+      }
+    };
+
+    let cart = [];
+    let currentCategory = 'Mini Pancakes';
+    let itemToDelete = null;
+    let selectedPaymentMethod = 'cash'; // Default payment method
+
+    // Load custom items from localStorage
+    function loadCustomItems() {
+      const customItems = JSON.parse(localStorage.getItem('customItems')) || { menu: {}, prices: {}, images: {} };
+      
+      // Merge custom items with default items
+      for (const category in customItems.menu) {
+        if (menu[category]) {
+          menu[category] = [...new Set([...menu[category], ...customItems.menu[category]])];
+        } else {
+          menu[category] = customItems.menu[category];
+        }
+      }
+      
+      for (const category in customItems.prices) {
+        if (prices[category]) {
+          Object.assign(prices[category], customItems.prices[category]);
+        } else {
+          prices[category] = customItems.prices[category];
+        }
+      }
+      
+      for (const category in customItems.images) {
+        if (images[category]) {
+          Object.assign(images[category], customItems.images[category]);
+        } else {
+          images[category] = customItems.images[category];
+        }
+      }
+    }
+
+    // Save custom items to localStorage
+    function saveCustomItems() {
+      const customItems = JSON.parse(localStorage.getItem('customItems')) || { menu: {}, prices: {}, images: {} };
+      localStorage.setItem('customItems', JSON.stringify(customItems));
+    }
+
+    function showMenu(category) {
+      currentCategory = category;
+      document.getElementById('categoryTitle').textContent = category.toUpperCase();
+      const items = menu[category] || [];
+      const itemList = document.getElementById('itemList');
+      
+      itemList.innerHTML = items.map(item => {
+        const itemPrice = prices[category]?.[item] || '—';
+        const itemImage = images[category]?.[item] || 'https://images.unsplash.com/photo-1559715745-e1b33a271c8f?w=400&h=400&fit=crop&crop=center';
+        
+        return `
+          <div class='item' onclick="addToCart('${category}', '${item}')">
+            <div class="item-actions">
+              <button class="edit-btn" onclick="event.stopPropagation(); openEditItemModal('${category}', '${item}')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="delete-btn" onclick="event.stopPropagation(); confirmDeleteItem('${category}', '${item}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            <img src="${itemImage}" alt="${item}" class="item-image">
+            <div class="item-name">${item}</div>
+            <div class="item-price">₱${itemPrice}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.sidebar button').forEach(btn => {
+        if (btn.classList.contains('add-item-btn')) return;
+        btn.classList.remove('active');
+      });
+      
+      const activeBtn = Array.from(document.querySelectorAll('.sidebar button'))
+        .find(btn => !btn.classList.contains('add-item-btn') && 
+               btn.textContent.toLowerCase().includes(category.toLowerCase().split(' ')[0]));
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function addToCart(category, itemName) {
+      const price = prices[category]?.[itemName] || 0;
+      const existing = cart.find(i => i.name === itemName && i.category === category);
+
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ category, name: itemName, price, qty: 1 });
+      }
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartContainer = document.getElementById('cartItems');
+      const totalDisplay = document.getElementById('total');
+
+      cartContainer.innerHTML = cart.map((item, index) => `
+        <div class="cart-item">
+          <span>${item.name} x${item.qty}</span>
+          <span>₱${item.price * item.qty}</span>
+          <button class="remove-btn" onclick="removeItem(${index})">×</button>
+        </div>
+      `).join('');
+
+      const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+      totalDisplay.textContent = `Total: ₱${total}`;
+    }
+
+    function removeItem(index) {
+      if (cart[index].qty > 1) {
+        cart[index].qty--;
+      } else {
+        cart.splice(index, 1);
+      }
+      updateCart();
+    }
+
+    // Payment Method Selection
+    function selectPaymentMethod(method) {
+      selectedPaymentMethod = method;
+      
+      // Update UI to show selected method
+      document.querySelectorAll('.payment-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+      
+      document.querySelector(`.payment-option[data-method="${method}"]`).classList.add('selected');
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        alert("Cart is empty!");
+        return;
+      }
+
+      const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+
+      const saleData = {
+        date: new Date().toLocaleDateString('en-PH'),
+        items: cart.map(item => `${item.name} x${item.qty}`).join(', '),
+        total: `₱${total}`,
+        paymentMethod: selectedPaymentMethod
+      };
+
+      let sales = JSON.parse(localStorage.getItem('salesRecords')) || [];
+      sales.push(saleData);
+      localStorage.setItem('salesRecords', JSON.stringify(sales));
+
+      alert(`Thank you for your purchase! Payment method: ${selectedPaymentMethod.toUpperCase()}. Sale recorded.`);
+      cart = [];
+      updateCart();
+    }
+
+    // Add Item Modal Functions
+    function openAddItemModal() {
+      document.getElementById('addItemModal').style.display = 'flex';
+    }
+
+    function closeAddItemModal() {
+      document.getElementById('addItemModal').style.display = 'none';
+      document.getElementById('addItemForm').reset();
+    }
+
+    function addNewItem(event) {
+      event.preventDefault();
+      
+      const category = document.getElementById('itemCategory').value;
+      const name = document.getElementById('itemName').value;
+      const price = parseFloat(document.getElementById('itemPrice').value);
+      const image = document.getElementById('itemImage').value || 'https://images.unsplash.com/photo-1559715745-e1b33a271c8f?w=400&h=400&fit=crop&crop=center';
+      
+      // Add to menu
+      if (!menu[category]) {
+        menu[category] = [];
+      }
+      menu[category].push(name);
+      
+      // Add to prices
+      if (!prices[category]) {
+        prices[category] = {};
+      }
+      prices[category][name] = price;
+      
+      // Add to images
+      if (!images[category]) {
+        images[category] = {};
+      }
+      images[category][name] = image;
+      
+      // Save to localStorage
+      const customItems = JSON.parse(localStorage.getItem('customItems')) || { menu: {}, prices: {}, images: {} };
+      
+      if (!customItems.menu[category]) {
+        customItems.menu[category] = [];
+      }
+      customItems.menu[category].push(name);
+      
+      if (!customItems.prices[category]) {
+        customItems.prices[category] = {};
+      }
+      customItems.prices[category][name] = price;
+      
+      if (!customItems.images[category]) {
+        customItems.images[category] = {};
+      }
+      customItems.images[category][name] = image;
+      
+      localStorage.setItem('customItems', JSON.stringify(customItems));
+      
+      // Update the display
+      showMenu(category);
+      
+      // Close modal and reset form
+      closeAddItemModal();
+      
+      alert(`"${name}" has been added to ${category}!`);
+    }
+
+    // Edit Item Functions
+    function openEditItemModal(category, itemName) {
+      document.getElementById('editOriginalCategory').value = category;
+      document.getElementById('editOriginalName').value = itemName;
+      document.getElementById('editItemCategory').value = category;
+      document.getElementById('editItemName').value = itemName;
+      document.getElementById('editItemPrice').value = prices[category][itemName];
+      document.getElementById('editItemImage').value = images[category][itemName] || '';
+      
+      document.getElementById('editItemModal').style.display = 'flex';
+    }
+
+    function closeEditItemModal() {
+      document.getElementById('editItemModal').style.display = 'none';
+      document.getElementById('editItemForm').reset();
+    }
+
+    function updateItem(event) {
+      event.preventDefault();
+      
+      const originalCategory = document.getElementById('editOriginalCategory').value;
+      const originalName = document.getElementById('editOriginalName').value;
+      const newCategory = document.getElementById('editItemCategory').value;
+      const newName = document.getElementById('editItemName').value;
+      const newPrice = parseFloat(document.getElementById('editItemPrice').value);
+      const newImage = document.getElementById('editItemImage').value || 'https://images.unsplash.com/photo-1559715745-e1b33a271c8f?w=400&h=400&fit=crop&crop=center';
+      
+      // Remove from original location
+      if (originalCategory === newCategory && originalName === newName) {
+        // Only updating price/image
+        prices[originalCategory][originalName] = newPrice;
+        images[originalCategory][originalName] = newImage;
+      } else {
+        // Moving to different category or changing name
+        // Remove from original
+        const index = menu[originalCategory].indexOf(originalName);
+        if (index > -1) {
+          menu[originalCategory].splice(index, 1);
+        }
+        delete prices[originalCategory][originalName];
+        delete images[originalCategory][originalName];
+        
+        // Add to new location
+        if (!menu[newCategory]) {
+          menu[newCategory] = [];
+        }
+        menu[newCategory].push(newName);
+        
+        if (!prices[newCategory]) {
+          prices[newCategory] = {};
+        }
+        prices[newCategory][newName] = newPrice;
+        
+        if (!images[newCategory]) {
+          images[newCategory] = {};
+        }
+        images[newCategory][newName] = newImage;
+      }
+      
+      // Update localStorage
+      const customItems = JSON.parse(localStorage.getItem('customItems')) || { menu: {}, prices: {}, images: {} };
+      
+      // Update custom items
+      if (originalCategory === newCategory && originalName === newName) {
+        // Only updating price/image
+        if (customItems.prices[originalCategory]) {
+          customItems.prices[originalCategory][originalName] = newPrice;
+        }
+        if (customItems.images[originalCategory]) {
+          customItems.images[originalCategory][originalName] = newImage;
+        }
+      } else {
+        // Moving to different category or changing name
+        // Remove from original in custom items
+        if (customItems.menu[originalCategory]) {
+          const index = customItems.menu[originalCategory].indexOf(originalName);
+          if (index > -1) {
+            customItems.menu[originalCategory].splice(index, 1);
+          }
+        }
+        if (customItems.prices[originalCategory]) {
+          delete customItems.prices[originalCategory][originalName];
+        }
+        if (customItems.images[originalCategory]) {
+          delete customItems.images[originalCategory][originalName];
+        }
+        
+        // Add to new location in custom items
+        if (!customItems.menu[newCategory]) {
+          customItems.menu[newCategory] = [];
+        }
+        customItems.menu[newCategory].push(newName);
+        
+        if (!customItems.prices[newCategory]) {
+          customItems.prices[newCategory] = {};
+        }
+        customItems.prices[newCategory][newName] = newPrice;
+        
+        if (!customItems.images[newCategory]) {
+          customItems.images[newCategory] = {};
+        }
+        customItems.images[newCategory][newName] = newImage;
+      }
+      
+      localStorage.setItem('customItems', JSON.stringify(customItems));
+      
+      // Update the display
+      showMenu(newCategory);
+      
+      // Close modal
+      closeEditItemModal();
+      
+      alert(`"${originalName}" has been updated!`);
+    }
+
+    // Delete Item Functions
+    function confirmDeleteItem(category, itemName) {
+      itemToDelete = { category, name: itemName };
+      document.getElementById('deleteMessage').textContent = `Are you sure you want to delete "${itemName}" from ${category}?`;
+      document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').style.display = 'none';
+      itemToDelete = null;
+    }
+
+    function deleteItem() {
+      if (!itemToDelete) return;
+      
+      const { category, name } = itemToDelete;
+      
+      // Remove from menu
+      const index = menu[category].indexOf(name);
+      if (index > -1) {
+        menu[category].splice(index, 1);
+      }
+      
+      // Remove from prices
+      delete prices[category][name];
+      
+      // Remove from images
+      delete images[category][name];
+      
+      // Update localStorage
+      const customItems = JSON.parse(localStorage.getItem('customItems')) || { menu: {}, prices: {}, images: {} };
+      
+      if (customItems.menu[category]) {
+        const customIndex = customItems.menu[category].indexOf(name);
+        if (customIndex > -1) {
+          customItems.menu[category].splice(customIndex, 1);
+        }
+      }
+      
+      if (customItems.prices[category]) {
+        delete customItems.prices[category][name];
+      }
+      
+      if (customItems.images[category]) {
+        delete customItems.images[category][name];
+      }
+      
+      localStorage.setItem('customItems', JSON.stringify(customItems));
+      
+      // Update the display
+      showMenu(currentCategory);
+      
+      // Close modal
+      closeDeleteModal();
+      
+      alert(`"${name}" has been deleted from ${category}!`);
+    }
+
+    // Event Listeners
+    document.getElementById('addItemForm').addEventListener('submit', addNewItem);
+    document.getElementById('cancelItemBtn').addEventListener('click', closeAddItemModal);
+    
+    document.getElementById('editItemForm').addEventListener('submit', updateItem);
+    document.getElementById('cancelEditBtn').addEventListener('click', closeEditItemModal);
+    
+    document.getElementById('cancelDeleteBtn').addEventListener('click', closeDeleteModal);
+    document.getElementById('confirmDeleteBtn').addEventListener('click', deleteItem);
+    
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      if (confirm('Are you sure you want to logout?')) {
+        window.location.href = 'login.html';
+      }
+    });
+
+    // Initialize the menu with Mini Pancakes as default
+    loadCustomItems();
+    showMenu('Mini Pancakes');
+  </script>
+</body>
+</html>

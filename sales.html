@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Records - Treatopia POS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Spectral:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5eeff 0%, #e8d9ff 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(to right, #9c6ade, #b388eb);
+      color: white;
+      font-family: 'Spectral', serif;
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .card-header {
+      background: linear-gradient(to right, #b388eb, #9c6ade);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-header h2 {
+      font-family: 'Spectral', serif;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .card-body {
+      padding: 25px;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+      gap: 15px;
+    }
+
+    .stat-card {
+      background: #f8f4ff;
+      border-radius: 10px;
+      padding: 20px;
+      flex: 1;
+      min-width: 200px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid #b388eb;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #7e57c2;
+      margin: 10px 0;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th {
+      background-color: #f0e6ff;
+      color: #7e57c2;
+      font-weight: 600;
+      text-align: left;
+      padding: 15px;
+      border-bottom: 2px solid #d8b6f1;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover {
+      background-color: #f9f5ff;
+    }
+
+    .no-sales {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+      font-style: italic;
+    }
+
+    .no-sales-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: #d8b6f1;
+    }
+
+    .back-container {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .back-button {
+      background: linear-gradient(to right, #b388eb, #9c6ade);
+      color: white;
+      font-weight: 600;
+      padding: 12px 30px;
+      border-radius: 30px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(179, 136, 235, 0.3);
+    }
+
+    .back-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(179, 136, 235, 0.4);
+    }
+
+    .date-cell {
+      font-weight: 500;
+      color: #7e57c2;
+    }
+
+    .total-cell {
+      font-weight: 600;
+      color: #5d4037;
+    }
+
+    .payment-cash {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 13px;
+      display: inline-block;
+    }
+
+    .payment-credit {
+      background-color: #e3f2fd;
+      color: #1565c0;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 13px;
+      display: inline-block;
+    }
+
+    .analytics-button {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 30px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+    }
+
+    .analytics-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Analytics Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .analytics-modal {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .analytics-modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      background: linear-gradient(to right, #b388eb, #9c6ade);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-family: 'Spectral', serif;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .close-button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-body {
+      padding: 25px;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .analytics-card {
+      background: #f8f4ff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid #b388eb;
+    }
+
+    .analytics-card h3 {
+      font-size: 16px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .analytics-card .value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #7e57c2;
+    }
+
+    .payment-breakdown {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .payment-type {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .payment-type.cash {
+      border-top: 3px solid #4caf50;
+    }
+
+    .payment-type.credit {
+      border-top: 3px solid #2196f3;
+    }
+
+    .payment-type .amount {
+      font-weight: 600;
+      font-size: 18px;
+      margin: 5px 0;
+    }
+
+    .payment-type.cash .amount {
+      color: #2e7d32;
+    }
+
+    .payment-type.credit .amount {
+      color: #1565c0;
+    }
+
+    .payment-type .label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .analytics-chart {
+      background: #f8f4ff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-placeholder {
+      height: 200px;
+      background: #e8d9ff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7e57c2;
+      font-weight: 600;
+    }
+
+    .analytics-table-container {
+      overflow-x: auto;
+    }
+
+    /* Receipt Modal Styles - ADDED */
+    .receipt-modal {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+    
+    .modal-overlay.active .receipt-modal {
+      transform: translateY(0);
+    }
+    
+    .receipt {
+      font-family: 'Courier New', monospace;
+      width: 100%;
+      max-width: 350px;
+      margin: 0 auto;
+      padding: 20px;
+      background: white;
+      border: 1px dashed #ccc;
+    }
+    
+    .receipt-header {
+      text-align: center;
+      margin-bottom: 15px;
+      border-bottom: 1px dashed #333;
+      padding-bottom: 10px;
+    }
+    
+    .receipt-header h2 {
+      font-family: 'Spectral', serif;
+      font-size: 22px;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    
+    .receipt-header p {
+      font-size: 12px;
+      margin: 2px 0;
+      color: #666;
+    }
+    
+    .receipt-details {
+      margin-bottom: 15px;
+    }
+    
+    .receipt-details p {
+      margin: 5px 0;
+      font-size: 13px;
+    }
+    
+    .receipt-items {
+      width: 100%;
+      margin-bottom: 15px;
+      border-bottom: 1px dashed #333;
+      padding-bottom: 10px;
+    }
+    
+    .receipt-items table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .receipt-items th {
+      background: none;
+      color: #333;
+      border-bottom: 1px solid #333;
+      padding: 5px;
+      font-size: 12px;
+    }
+    
+    .receipt-items td {
+      padding: 5px;
+      border-bottom: none;
+      font-size: 12px;
+    }
+    
+    .receipt-items .item-name {
+      text-align: left;
+    }
+    
+    .receipt-items .item-qty {
+      text-align: center;
+    }
+    
+    .receipt-items .item-price {
+      text-align: right;
+    }
+    
+    .receipt-total {
+      text-align: right;
+      margin-bottom: 15px;
+    }
+    
+    .receipt-total p {
+      margin: 5px 0;
+      font-size: 13px;
+    }
+    
+    .receipt-total .grand-total {
+      font-weight: bold;
+      font-size: 16px;
+      border-top: 1px dashed #333;
+      padding-top: 5px;
+    }
+    
+    .receipt-footer {
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      margin-top: 15px;
+    }
+    
+    .receipt-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .print-button {
+      background: linear-gradient(to right, #4caf50, #66bb6a);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    .print-button:hover {
+      background: linear-gradient(to right, #388e3c, #4caf50);
+    }
+    
+    .close-receipt-button {
+      background: linear-gradient(to right, #f44336, #ef5350);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    .close-receipt-button:hover {
+      background: linear-gradient(to right, #d32f2f, #f44336);
+    }
+    
+    .clickable-items {
+      color: #7e57c2;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: all 0.2s ease;
+    }
+    
+    .clickable-items:hover {
+      color: #5e35b1;
+      background-color: #f0e6ff;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .stats-container {
+        flex-direction: column;
+      }
+      
+      .stat-card {
+        min-width: 100%;
+      }
+      
+      th, td {
+        padding: 10px;
+      }
+
+      .card-header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .payment-breakdown {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>TREATOPIA POS - SALES RECORD</header>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>Sales History</h2>
+        <button class="analytics-button" id="analyticsButton">
+          <span>📊</span> View Analytics
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-label">Total Sales</div>
+            <div class="stat-value" id="totalSales">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Today's Sales</div>
+            <div class="stat-value" id="todaySales">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Average Order</div>
+            <div class="stat-value" id="avgOrder">₱0</div>
+          </div>
+        </div>
+
+        <table id="salesTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Payment Method</th>
+            </tr>
+          </thead>
+          <tbody id="salesBody"></tbody>
+        </table>
+        <div id="noSales" class="no-sales" style="display:none;">
+          <div class="no-sales-icon">📊</div>
+          <p>No sales recorded yet.</p>
+          <p>Start making sales in the POS system to see records here.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="back-container">
+      <a href="home.html" class="back-button">
+        <span>←</span> Back to POS
+      </a>
+    </div>
+  </div>
+
+  <!-- Analytics Modal -->
+  <div class="modal-overlay" id="analyticsModal">
+    <div class="analytics-modal">
+      <div class="modal-header">
+        <h2>Sales Analytics</h2>
+        <button class="close-button" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <h3>Total Revenue</h3>
+            <div class="value" id="modalTotalRevenue">₱0</div>
+            <div class="payment-breakdown">
+              <div class="payment-type cash">
+                <div class="amount" id="cashRevenue">₱0</div>
+                <div class="label">Cash</div>
+              </div>
+              <div class="payment-type credit">
+                <div class="amount" id="creditRevenue">₱0</div>
+                <div class="label">Credit</div>
+              </div>
+            </div>
+          </div>
+          <div class="analytics-card">
+            <h3>Average Order Value</h3>
+            <div class="value" id="modalAvgOrder">₱0</div>
+          </div>
+          <div class="analytics-card">
+            <h3>Orders This Week</h3>
+            <div class="value" id="modalWeekOrders">0</div>
+            <div class="payment-breakdown">
+              <div class="payment-type cash">
+                <div class="amount" id="cashOrders">0</div>
+                <div class="label">Cash</div>
+              </div>
+              <div class="payment-type credit">
+                <div class="amount" id="creditOrders">0</div>
+                <div class="label">Credit</div>
+              </div>
+            </div>
+          </div>
+          <div class="analytics-card">
+            <h3>Revenue This Week</h3>
+            <div class="value" id="modalWeekRevenue">₱0</div>
+            <div class="payment-breakdown">
+              <div class="payment-type cash">
+                <div class="amount" id="cashWeekRevenue">₱0</div>
+                <div class="label">Cash</div>
+              </div>
+              <div class="payment-type credit">
+                <div class="amount" id="creditWeekRevenue">₱0</div>
+                <div class="label">Credit</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-chart">
+          <h3>Sales Trend</h3>
+          <div class="chart-placeholder">
+            Sales Trend Visualization (Chart would appear here)
+          </div>
+        </div>
+
+        <div class="analytics-table-container">
+          <h3>Daily Breakdown</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Orders</th>
+                <th>Revenue</th>
+                <th>Avg. Order Value</th>
+                <th>Cash</th>
+                <th>Credit</th>
+              </tr>
+            </thead>
+            <tbody id="dailyBreakdown">
+              <!-- Daily breakdown data will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt Modal - ADDED -->
+  <div class="modal-overlay" id="receiptModal">
+    <div class="receipt-modal">
+      <div class="modal-header">
+        <h2>Order Receipt</h2>
+        <button class="close-button" id="closeReceipt">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt" id="receiptContent">
+          <!-- Receipt content will be populated here -->
+        </div>
+        <div class="receipt-buttons">
+          <button class="print-button" id="printReceipt">
+            <span>🖨️</span> Print Receipt
+          </button>
+          <button class="close-receipt-button" id="closeReceiptButton">
+            <span>✕</span> Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sample sales data with payment methods
+    const sampleSalesData = [
+      { date: '12/15/2023', items: 'Ice Cream (2), Cake (1)', total: '₱850', paymentMethod: 'cash' },
+      { date: '12/15/2023', items: 'Cookies (5), Brownie (2)', total: '₱650', paymentMethod: 'credit' },
+      { date: '12/14/2023', items: 'Cupcake (3), Donut (2)', total: '₱420', paymentMethod: 'cash' },
+      { date: '12/14/2023', items: 'Ice Cream (1), Cake (2)', total: '₱720', paymentMethod: 'credit' },
+      { date: '12/13/2023', items: 'Cookies (10), Brownie (1)', total: '₱550', paymentMethod: 'cash' },
+      { date: '12/13/2023', items: 'Cupcake (6), Donut (3)', total: '₱680', paymentMethod: 'cash' },
+      { date: '12/12/2023', items: 'Ice Cream (3), Cake (1)', total: '₱920', paymentMethod: 'credit' },
+      { date: '12/12/2023', items: 'Cookies (8), Brownie (2)', total: '₱740', paymentMethod: 'credit' }
+    ];
+
+    // Load and display sales records from localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+      const salesBody = document.getElementById('salesBody');
+      const noSalesMsg = document.getElementById('noSales');
+      const totalSalesEl = document.getElementById('totalSales');
+      const todaySalesEl = document.getElementById('todaySales');
+      const avgOrderEl = document.getElementById('avgOrder');
+      const analyticsButton = document.getElementById('analyticsButton');
+      const analyticsModal = document.getElementById('analyticsModal');
+      const closeModal = document.getElementById('closeModal');
+      
+      // Receipt modal elements - ADDED
+      const receiptModal = document.getElementById('receiptModal');
+      const closeReceipt = document.getElementById('closeReceipt');
+      const closeReceiptButton = document.getElementById('closeReceiptButton');
+      const printReceipt = document.getElementById('printReceipt');
+
+      // Retrieve sales records from localStorage or use sample data
+      let sales = JSON.parse(localStorage.getItem('salesRecords')) || sampleSalesData;
+      const today = new Date().toLocaleDateString('en-PH');
+
+      if (sales.length === 0) {
+        noSalesMsg.style.display = 'block';
+        return;
+      }
+
+      // Calculate statistics
+      let totalSales = sales.length;
+      let todaySales = sales.filter(sale => sale.date === today).length;
+      let totalRevenue = sales.reduce((sum, sale) => {
+        // Extract numeric value from total string (e.g., "₱850" -> 850)
+        const amount = parseInt(sale.total.replace('₱', '')) || 0;
+        return sum + amount;
+      }, 0);
+      let avgOrderValue = totalRevenue / totalSales;
+
+      // Update statistics
+      totalSalesEl.textContent = totalSales;
+      todaySalesEl.textContent = todaySales;
+      avgOrderEl.textContent = `₱${Math.round(avgOrderValue)}`;
+
+      // Display each sale record
+      sales.forEach((sale, index) => {
+        const row = document.createElement('tr');
+        const paymentClass = sale.paymentMethod === 'cash' ? 'payment-cash' : 'payment-credit';
+        const paymentText = sale.paymentMethod === 'cash' ? 'Cash' : 'Credit Card';
+        
+        row.innerHTML = `
+          <td class="date-cell">${sale.date}</td>
+          <td><span class="clickable-items" data-index="${index}">${sale.items}</span></td>
+          <td class="total-cell">${sale.total}</td>
+          <td><span class="${paymentClass}">${paymentText}</span></td>
+        `;
+        salesBody.appendChild(row);
+      });
+
+      // Analytics button functionality
+      analyticsButton.addEventListener('click', showAnalytics);
+      closeModal.addEventListener('click', hideAnalytics);
+      
+      // Close modal when clicking outside of it
+      analyticsModal.addEventListener('click', (e) => {
+        if (e.target === analyticsModal) {
+          hideAnalytics();
+        }
+      });
+
+      // Receipt modal functionality - ADDED
+      closeReceipt.addEventListener('click', hideReceipt);
+      closeReceiptButton.addEventListener('click', hideReceipt);
+      
+      // Close receipt modal when clicking outside of it
+      receiptModal.addEventListener('click', (e) => {
+        if (e.target === receiptModal) {
+          hideReceipt();
+        }
+      });
+
+      // Print receipt functionality - ADDED
+      printReceipt.addEventListener('click', () => {
+        const receiptContent = document.getElementById('receiptContent').innerHTML;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Receipt - Treatopia</title>
+            <style>
+              body { 
+                font-family: 'Courier New', monospace; 
+                margin: 0; 
+                padding: 20px;
+                color: #000;
+              }
+              .receipt { 
+                width: 100%; 
+                max-width: 350px; 
+                margin: 0 auto; 
+              }
+              .receipt-header { 
+                text-align: center; 
+                margin-bottom: 15px; 
+                border-bottom: 1px dashed #000; 
+                padding-bottom: 10px; 
+              }
+              .receipt-header h2 { 
+                font-size: 22px; 
+                margin-bottom: 5px; 
+              }
+              .receipt-header p { 
+                font-size: 12px; 
+                margin: 2px 0; 
+              }
+              .receipt-details p { 
+                margin: 5px 0; 
+                font-size: 13px; 
+              }
+              .receipt-items { 
+                width: 100%; 
+                margin-bottom: 15px; 
+                border-bottom: 1px dashed #000; 
+                padding-bottom: 10px; 
+              }
+              .receipt-items table { 
+                width: 100%; 
+                border-collapse: collapse; 
+              }
+              .receipt-items th { 
+                border-bottom: 1px solid #000; 
+                padding: 5px; 
+                font-size: 12px; 
+              }
+              .receipt-items td { 
+                padding: 5px; 
+                font-size: 12px; 
+              }
+              .item-name { text-align: left; }
+              .item-qty { text-align: center; }
+              .item-price { text-align: right; }
+              .receipt-total { 
+                text-align: right; 
+                margin-bottom: 15px; 
+              }
+              .receipt-total p { 
+                margin: 5px 0; 
+                font-size: 13px; 
+              }
+              .grand-total { 
+                font-weight: bold; 
+                font-size: 16px; 
+                border-top: 1px dashed #000; 
+                padding-top: 5px; 
+              }
+              .receipt-footer { 
+                text-align: center; 
+                font-size: 11px; 
+                margin-top: 15px; 
+              }
+              @media print {
+                body { margin: 0; }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="receipt">${receiptContent}</div>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+      });
+
+      // Add click event listeners to items - ADDED
+      document.querySelectorAll('.clickable-items').forEach(item => {
+        item.addEventListener('click', (e) => {
+          const index = e.target.getAttribute('data-index');
+          showReceipt(sales[index]);
+        });
+      });
+
+      function showReceipt(sale) {
+        const receiptContent = document.getElementById('receiptContent');
+        
+        // Parse items from string to array
+        const itemsArray = sale.items.split(', ').map(item => {
+          const match = item.match(/(.+) \((\d+)\)/);
+          return match ? { name: match[1], quantity: parseInt(match[2]) } : { name: item, quantity: 1 };
+        });
+        
+        // Calculate prices (this is a simplified calculation)
+        const totalAmount = parseInt(sale.total.replace('₱', ''));
+        const itemCount = itemsArray.reduce((sum, item) => sum + item.quantity, 0);
+        const avgPrice = Math.round(totalAmount / itemCount);
+        
+        // Generate receipt HTML
+        receiptContent.innerHTML = `
+          <div class="receipt-header">
+            <h2>TREATOPIA</h2>
+            <p>CAFE</p>
+            <p>SALAMAT PO!!</p>
+          </div>
+          <div class="receipt-details">
+            <p><strong>Date:</strong> ${sale.date}</p>
+            <p><strong>Order ID:</strong> ${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}</p>
+            <p><strong>Payment:</strong> ${sale.paymentMethod === 'cash' ? 'Cash' : 'Credit Card'}</p>
+          </div>
+          <div class="receipt-items">
+            <table>
+              <thead>
+                <tr>
+                  <th class="item-name">Item</th>
+                  <th class="item-qty">Qty</th>
+                  <th class="item-price">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsArray.map(item => `
+                  <tr>
+                    <td class="item-name">${item.name}</td>
+                    <td class="item-qty">${item.quantity}</td>
+                    <td class="item-price">₱${item.quantity * avgPrice}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div class="receipt-total">
+            <p>Subtotal: ₱${totalAmount}</p>
+            <p>Tax: ₱0</p>
+            <p class="grand-total">Total: ${sale.total}</p>
+          </div>
+          <div class="receipt-footer">
+            <p>Thank you for your purchase!</p>
+            <p>Please visit us again</p>
+          </div>
+        `;
+        
+        receiptModal.classList.add('active');
+      }
+
+      function hideReceipt() {
+        receiptModal.classList.remove('active');
+      }
+
+      function showAnalytics() {
+        analyticsModal.classList.add('active');
+        populateAnalytics();
+      }
+
+      function hideAnalytics() {
+        analyticsModal.classList.remove('active');
+      }
+
+      function populateAnalytics() {
+        // Calculate analytics data
+        const totalRevenue = sales.reduce((sum, sale) => {
+          const amount = parseInt(sale.total.replace('₱', '')) || 0;
+          return sum + amount;
+        }, 0);
+        
+        // Calculate payment method breakdown
+        let cashRevenue = 0;
+        let creditRevenue = 0;
+        let cashOrders = 0;
+        let creditOrders = 0;
+        
+        sales.forEach(sale => {
+          const amount = parseInt(sale.total.replace('₱', '')) || 0;
+          if (sale.paymentMethod === 'cash') {
+            cashRevenue += amount;
+            cashOrders += 1;
+          } else {
+            creditRevenue += amount;
+            creditOrders += 1;
+          }
+        });
+        
+        const avgOrderValue = totalRevenue / sales.length;
+        
+        // Calculate weekly data (last 7 days)
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const weekSales = sales.filter(sale => {
+          const saleDate = new Date(sale.date);
+          return saleDate >= oneWeekAgo;
+        });
+        
+        const weekRevenue = weekSales.reduce((sum, sale) => {
+          const amount = parseInt(sale.total.replace('₱', '')) || 0;
+          return sum + amount;
+        }, 0);
+        
+        // Calculate weekly payment breakdown
+        let cashWeekRevenue = 0;
+        let creditWeekRevenue = 0;
+        let cashWeekOrders = 0;
+        let creditWeekOrders = 0;
+        
+        weekSales.forEach(sale => {
+          const amount = parseInt(sale.total.replace('₱', '')) || 0;
+          if (sale.paymentMethod === 'cash') {
+            cashWeekRevenue += amount;
+            cashWeekOrders += 1;
+          } else {
+            creditWeekRevenue += amount;
+            creditWeekOrders += 1;
+          }
+        });
+        
+        // Calculate daily breakdown
+        const dailyData = {};
+        sales.forEach(sale => {
+          if (!dailyData[sale.date]) {
+            dailyData[sale.date] = {
+              orders: 0,
+              revenue: 0,
+              cashOrders: 0,
+              creditOrders: 0,
+              cashRevenue: 0,
+              creditRevenue: 0
+            };
+          }
+          dailyData[sale.date].orders += 1;
+          const amount = parseInt(sale.total.replace('₱', '')) || 0;
+          dailyData[sale.date].revenue += amount;
+          
+          if (sale.paymentMethod === 'cash') {
+            dailyData[sale.date].cashOrders += 1;
+            dailyData[sale.date].cashRevenue += amount;
+          } else {
+            dailyData[sale.date].creditOrders += 1;
+            dailyData[sale.date].creditRevenue += amount;
+          }
+        });
+        
+        // Update modal content
+        document.getElementById('modalTotalRevenue').textContent = `₱${totalRevenue}`;
+        document.getElementById('modalAvgOrder').textContent = `₱${Math.round(avgOrderValue)}`;
+        document.getElementById('modalWeekOrders').textContent = weekSales.length;
+        document.getElementById('modalWeekRevenue').textContent = `₱${weekRevenue}`;
+        
+        // Update payment breakdown
+        document.getElementById('cashRevenue').textContent = `₱${cashRevenue}`;
+        document.getElementById('creditRevenue').textContent = `₱${creditRevenue}`;
+        document.getElementById('cashOrders').textContent = cashOrders;
+        document.getElementById('creditOrders').textContent = creditOrders;
+        document.getElementById('cashWeekRevenue').textContent = `₱${cashWeekRevenue}`;
+        document.getElementById('creditWeekRevenue').textContent = `₱${creditWeekRevenue}`;
+        
+        // Populate daily breakdown table
+        const dailyBreakdown = document.getElementById('dailyBreakdown');
+        dailyBreakdown.innerHTML = '';
+        
+        Object.keys(dailyData).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
+          const data = dailyData[date];
+          const avgDailyOrder = data.revenue / data.orders;
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${date}</td>
+            <td>${data.orders}</td>
+            <td>₱${data.revenue}</td>
+            <td>₱${Math.round(avgDailyOrder)}</td>
+            <td>${data.cashOrders} (₱${data.cashRevenue})</td>
+            <td>${data.creditOrders} (₱${data.creditRevenue})</td>
+          `;
+          dailyBreakdown.appendChild(row);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
